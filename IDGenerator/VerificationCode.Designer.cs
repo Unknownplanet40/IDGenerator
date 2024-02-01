@@ -37,6 +37,7 @@
             this.tb6 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.PassCodeHere = new System.Windows.Forms.Label();
+            this.CodeExpire = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -121,19 +122,27 @@
             // 
             // PassCodeHere
             // 
-            this.PassCodeHere.AutoSize = true;
-            this.PassCodeHere.Location = new System.Drawing.Point(12, 82);
+            this.PassCodeHere.Location = new System.Drawing.Point(9, 9);
             this.PassCodeHere.Name = "PassCodeHere";
-            this.PassCodeHere.Size = new System.Drawing.Size(75, 13);
+            this.PassCodeHere.Size = new System.Drawing.Size(28, 23);
             this.PassCodeHere.TabIndex = 8;
-            this.PassCodeHere.Text = "Code Go Here";
             this.PassCodeHere.Visible = false;
+            // 
+            // CodeExpire
+            // 
+            this.CodeExpire.Location = new System.Drawing.Point(12, 85);
+            this.CodeExpire.Name = "CodeExpire";
+            this.CodeExpire.Size = new System.Drawing.Size(189, 26);
+            this.CodeExpire.TabIndex = 9;
+            this.CodeExpire.Text = "Your code will expire in";
+            this.CodeExpire.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // VerificationCode
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(294, 120);
+            this.Controls.Add(this.CodeExpire);
             this.Controls.Add(this.PassCodeHere);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tb6);
@@ -165,5 +174,6 @@
         private System.Windows.Forms.TextBox tb6;
         private System.Windows.Forms.Button button1;
         public System.Windows.Forms.Label PassCodeHere;
+        private System.Windows.Forms.Label CodeExpire;
     }
 }
