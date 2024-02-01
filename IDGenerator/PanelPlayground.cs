@@ -10,18 +10,11 @@ using System.Windows.Forms;
 
 namespace IDGenerator
 {
-    public partial class ResetPassword : Form
+    public partial class PanelPlayground : Form
     {
-        public ResetPassword()
+        public PanelPlayground()
         {
             InitializeComponent();
-        }
-
-        private void CloseBTN_Click(object sender, EventArgs e)
-        {
-            LOGIN F1 = new LOGIN();
-            F1.Show();
-            this.Close();
         }
     }
 }

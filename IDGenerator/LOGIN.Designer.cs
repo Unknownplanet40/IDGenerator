@@ -1,6 +1,6 @@
 ﻿namespace IDGenerator
 {
-    partial class Form1
+    partial class LOGIN
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.Pname = new System.Windows.Forms.TextBox();
+            this.Uname = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.Pword = new System.Windows.Forms.TextBox();
@@ -37,6 +37,9 @@
             this.ResetPassword = new System.Windows.Forms.LinkLabel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.button1 = new System.Windows.Forms.Button();
+            this.ErrorMsg = new System.Windows.Forms.Label();
+            this.UnameError = new System.Windows.Forms.Label();
+            this.PwordError = new System.Windows.Forms.Label();
             this.CloseBTN = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.CloseBTN)).BeginInit();
@@ -53,13 +56,13 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "LOGIN";
             // 
-            // Pname
+            // Uname
             // 
-            this.Pname.Font = new System.Drawing.Font("Arial Rounded MT Bold", 12F);
-            this.Pname.Location = new System.Drawing.Point(383, 151);
-            this.Pname.Name = "Pname";
-            this.Pname.Size = new System.Drawing.Size(260, 26);
-            this.Pname.TabIndex = 6;
+            this.Uname.Font = new System.Drawing.Font("Arial Rounded MT Bold", 12F);
+            this.Uname.Location = new System.Drawing.Point(383, 151);
+            this.Uname.Name = "Uname";
+            this.Uname.Size = new System.Drawing.Size(260, 26);
+            this.Uname.TabIndex = 6;
             // 
             // label2
             // 
@@ -123,18 +126,19 @@
             // linkLabel1
             // 
             this.linkLabel1.ActiveLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(108)))), ((int)(((byte)(223)))));
-            this.linkLabel1.AutoSize = true;
             this.linkLabel1.BackColor = System.Drawing.Color.Transparent;
             this.linkLabel1.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(108)))), ((int)(((byte)(223)))));
             this.linkLabel1.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
             this.linkLabel1.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(108)))), ((int)(((byte)(223)))));
-            this.linkLabel1.Location = new System.Drawing.Point(458, 338);
+            this.linkLabel1.Location = new System.Drawing.Point(385, 332);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(106, 13);
+            this.linkLabel1.Size = new System.Drawing.Size(258, 13);
             this.linkLabel1.TabIndex = 14;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "FIRST TIME USER?";
+            this.linkLabel1.Text = "Don\'t Have an Account?";
+            this.linkLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.linkLabel1.VisitedLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(108)))), ((int)(((byte)(223)))));
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // button1
             // 
@@ -148,6 +152,36 @@
             this.button1.Text = "LOGIN";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // ErrorMsg
+            // 
+            this.ErrorMsg.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ErrorMsg.ForeColor = System.Drawing.Color.Red;
+            this.ErrorMsg.Location = new System.Drawing.Point(343, 386);
+            this.ErrorMsg.Name = "ErrorMsg";
+            this.ErrorMsg.Size = new System.Drawing.Size(330, 55);
+            this.ErrorMsg.TabIndex = 16;
+            this.ErrorMsg.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // UnameError
+            // 
+            this.UnameError.AutoSize = true;
+            this.UnameError.BackColor = System.Drawing.Color.Transparent;
+            this.UnameError.ForeColor = System.Drawing.Color.LightCoral;
+            this.UnameError.Location = new System.Drawing.Point(532, 135);
+            this.UnameError.Name = "UnameError";
+            this.UnameError.Size = new System.Drawing.Size(0, 13);
+            this.UnameError.TabIndex = 17;
+            // 
+            // PwordError
+            // 
+            this.PwordError.AutoSize = true;
+            this.PwordError.BackColor = System.Drawing.Color.Transparent;
+            this.PwordError.ForeColor = System.Drawing.Color.LightCoral;
+            this.PwordError.Location = new System.Drawing.Point(532, 192);
+            this.PwordError.Name = "PwordError";
+            this.PwordError.Size = new System.Drawing.Size(0, 13);
+            this.PwordError.TabIndex = 18;
             // 
             // CloseBTN
             // 
@@ -174,11 +208,14 @@
             this.panel2.Size = new System.Drawing.Size(337, 450);
             this.panel2.TabIndex = 1;
             // 
-            // Form1
+            // LOGIN
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(685, 450);
+            this.Controls.Add(this.PwordError);
+            this.Controls.Add(this.UnameError);
+            this.Controls.Add(this.ErrorMsg);
             this.Controls.Add(this.CloseBTN);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.button1);
@@ -187,13 +224,13 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.Pword);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.Pname);
+            this.Controls.Add(this.Uname);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.panel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximumSize = new System.Drawing.Size(685, 450);
             this.MinimumSize = new System.Drawing.Size(685, 450);
-            this.Name = "Form1";
+            this.Name = "LOGIN";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LOGIN";
             this.TopMost = true;
@@ -208,7 +245,7 @@
 
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox Pname;
+        private System.Windows.Forms.TextBox Uname;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox Pword;
@@ -217,6 +254,9 @@
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox CloseBTN;
+        private System.Windows.Forms.Label ErrorMsg;
+        private System.Windows.Forms.Label UnameError;
+        private System.Windows.Forms.Label PwordError;
     }
 }
 

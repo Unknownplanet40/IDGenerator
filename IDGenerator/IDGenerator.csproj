@@ -52,11 +52,22 @@
     <Compile Include="AdminUSER.Designer.cs">
       <DependentUpon>AdminUSER.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="LOGIN.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="LOGIN.Designer.cs">
+      <DependentUpon>LOGIN.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IDGeneratorProjectDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IDGeneratorProjectDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="PanelPlayground.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PanelPlayground.Designer.cs">
+      <DependentUpon>PanelPlayground.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,17 +77,32 @@
     <Compile Include="ResetPassword.Designer.cs">
       <DependentUpon>ResetPassword.cs</DependentUpon>
     </Compile>
+    <Compile Include="StudentRegister.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StudentRegister.Designer.cs">
+      <DependentUpon>StudentRegister.cs</DependentUpon>
+    </Compile>
     <Compile Include="StudentUSER.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="StudentUSER.Designer.cs">
       <DependentUpon>StudentUSER.cs</DependentUpon>
     </Compile>
+    <Compile Include="VerificationCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VerificationCode.Designer.cs">
+      <DependentUpon>VerificationCode.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AdminUSER.resx">
       <DependentUpon>AdminUSER.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="LOGIN.resx">
+      <DependentUpon>LOGIN.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PanelPlayground.resx">
+      <DependentUpon>PanelPlayground.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -91,6 +117,26 @@
     <EmbeddedResource Include="ResetPassword.resx">
       <DependentUpon>ResetPassword.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="StudentRegister.resx">
+      <DependentUpon>StudentRegister.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StudentUSER.resx">
+      <DependentUpon>StudentUSER.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VerificationCode.resx">
+      <DependentUpon>VerificationCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="IDGeneratorProjectDataSet.xsc">
+      <DependentUpon>IDGeneratorProjectDataSet.xsd</DependentUpon>
+    </None>
+    <None Include="IDGeneratorProjectDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>IDGeneratorProjectDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="IDGeneratorProjectDataSet.xss">
+      <DependentUpon>IDGeneratorProjectDataSet.xsd</DependentUpon>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -119,6 +165,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Placeholder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
