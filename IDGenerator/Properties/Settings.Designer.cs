@@ -32,5 +32,16 @@ namespace IDGenerator.Properties {
                 return ((string)(this["IDGeneratorCONSTRING"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=LAPTOP-7CJ5L5U7\\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integra" +
+            "ted Security=True;Encrypt=False;TrustServerCertificate=True")]
+        public string IDGeneratorProjectConnectionString {
+            get {
+                return ((string)(this["IDGeneratorProjectConnectionString"]));
+            }
+        }
     }
 }

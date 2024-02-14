@@ -3,25 +3,24 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Threading;
 using Timer = System.Threading.Timer;
+using System.Globalization;
 
 namespace IDGenerator
 {
     public partial class LOGIN : Form
     {
         SqlConnection con;
-        SqlCommand cmd;
-        SqlDataReader dr;
         Timer errorMessageTimer;
         public LOGIN()
         {
             InitializeComponent();
-            con = new SqlConnection("Data Source=RJ45;Initial Catalog=IDGeneratorProject;Integrated Security=True");
+            con = new SqlConnection("Data Source=LAPTOP-7CJ5L5U7\\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True");
         }
 
         // Methods go here ----------------------------------------------------------------
         private void UpdateLoginStatus(string username, int newStatus)
         {
-            using (SqlConnection con = new SqlConnection(@"Data Source=RJ45;Initial Catalog=IDGeneratorProject;Integrated Security=True"))
+            using (SqlConnection con = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
             {
                 con.Open();
 
@@ -103,7 +102,7 @@ namespace IDGenerator
                 errorMessageTimer = new Timer(ClearErrorMessage, null, 3000, Timeout.Infinite);
             } else
             {
-                using (SqlConnection conn = new SqlConnection(@"Data Source=RJ45;Initial Catalog=IDGeneratorProject;Integrated Security=True"))
+                using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
                 {
                     conn.Open();
 
@@ -117,8 +116,20 @@ namespace IDGenerator
                         {
                             if (dr.Read())
                             {
-                                String username = Convert.ToString(dr["username"]);
-                                String password = Convert.ToString(dr["password"]);
+                                string username = Convert.ToString(dr["username"]);
+                                string password = Convert.ToString(dr["password"]);
+                                string lastAccessString = Convert.ToString(dr["last_access"]);
+                                DateTime lastAccessDate;
+                                string formattedDate;
+
+                                if (DateTime.TryParseExact(lastAccessString, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out lastAccessDate))
+                                {
+                                    formattedDate = lastAccessDate.ToString("MMMM d, yyyy");
+                                }
+                                else
+                                {
+                                    formattedDate = DateTime.Now.ToString();
+                                }
 
                                 if (username != user)
                                 {
@@ -137,27 +148,32 @@ namespace IDGenerator
 
                                     if (status == 0)
                                     {
-                                        // update status to 1
-                                        UpdateLoginStatus(user, 0);
+                                        UpdateLoginStatus(user, 1);
 
                                         if (role == 1)
                                         {
                                             // Authentication successful
                                             AdminUSER admin = new AdminUSER();
+                                            admin.UID.Text = username;
                                             admin.Show();
                                             this.Hide();
                                         }
                                         else
                                         {
                                             StudentUSER student = new StudentUSER();
+                                            student.greetings_uname.Text = username;
+                                            student.datelogin.Text = "Last Login: " + formattedDate;
+                                            student.UserIDlabel.Text = Convert.ToString(dr["AID"]);
                                             student.Show();
                                             this.Hide();
                                         }
                                     }
                                     else
                                     {
-                                        ErrorMsg.Text = "Your Account is Currently Login from another session.";
-                                        errorMessageTimer = new Timer(ClearErrorMessage, null, 3000, Timeout.Infinite); // clear after 3 seconds
+                                        if (MessageBox.Show("You didn't log out last time. We will log you out momentarily. Please log in again!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK)
+                                        {
+                                            UpdateLoginStatus(user, 0);
+                                        }
                                     }
                                 }
                             }

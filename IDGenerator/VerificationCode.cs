@@ -43,9 +43,15 @@ namespace IDGenerator
             {
                 MessageBox.Show("Verification Match!", "Verified Successfully", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 studentRegister.EnableSubBTN(); // Call the method on the existing instance
-                studentRegister.VerBTN.Enabled = false;
+                studentRegister.VerBTN.Text = "Change Email";
+                studentRegister.Emailtxt.Enabled = false;
                 Close();
             }
+
+        }
+
+        private void VerificationCode_Load(object sender, EventArgs e)
+        {
 
         }
     }
