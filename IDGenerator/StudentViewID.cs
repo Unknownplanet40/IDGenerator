@@ -18,9 +18,13 @@ namespace IDGenerator
             InitializeComponent();
         }
 
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+        string smtpEmail = "Your email here";
+        string smtpPass = "Your email password here";
+
         private void StudentViewID_Load(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection conn = new SqlConnection(conString))
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("SELECT * FROM Student_Info WHERE StudentID = " + UIDreciever.Text, conn);

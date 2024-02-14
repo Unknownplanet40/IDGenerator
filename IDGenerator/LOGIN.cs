@@ -11,16 +11,21 @@ namespace IDGenerator
     {
         SqlConnection con;
         Timer errorMessageTimer;
+
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+        string smtpEmail = "Your email here";
+        string smtpPass = "Your email password here";
+
         public LOGIN()
         {
             InitializeComponent();
-            con = new SqlConnection("Data Source=LAPTOP-7CJ5L5U7\\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True");
+            con = new SqlConnection(conString);
         }
 
         // Methods go here ----------------------------------------------------------------
         private void UpdateLoginStatus(string username, int newStatus)
         {
-            using (SqlConnection con = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection con = new SqlConnection(conString))
             {
                 con.Open();
 
@@ -102,7 +107,7 @@ namespace IDGenerator
                 errorMessageTimer = new Timer(ClearErrorMessage, null, 3000, Timeout.Infinite);
             } else
             {
-                using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                using (SqlConnection conn = new SqlConnection(conString))
                 {
                     conn.Open();
 

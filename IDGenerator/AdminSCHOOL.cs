@@ -17,6 +17,8 @@ namespace IDGenerator
             InitializeComponent();
         }
 
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+
         private void AdminSCHOOL_Load(object sender, EventArgs e)
         {
             // TODO: This line of code loads data into the 'iDGeneratorProjectDataSet.School_Info' table. You can move, or remove it, as needed.
@@ -27,7 +29,7 @@ namespace IDGenerator
 
         private void tableupdate()
         {
-            using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection conn = new SqlConnection(conString))
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("SELECT School, principal FROM School_Info WHERE ID = 1", conn);
@@ -45,7 +47,7 @@ namespace IDGenerator
 
         private void tableid()
         {
-            using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection conn = new SqlConnection(conString))
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("SELECT TOP 1 ID FROM School_Info ORDER BY ID DESC", conn);
@@ -85,7 +87,7 @@ namespace IDGenerator
                 MessageBox.Show("Please Enter A value", "Empty input", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             } else
             {
-                using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                using (SqlConnection conn = new SqlConnection(conString))
                 {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand("UPDATE School_Info SET School = @sch, principal = @prin WHERE ID = 1", conn))
@@ -115,7 +117,7 @@ namespace IDGenerator
             }
             else
             {
-                using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                using (SqlConnection conn = new SqlConnection(conString))
                 {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand("UPDATE School_Info SET adviser = @ad, year = @y, section = @sec WHERE ID = @DI", conn))
@@ -147,7 +149,7 @@ namespace IDGenerator
             }
             else
             {
-                using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                using (SqlConnection conn = new SqlConnection(conString))
                 {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand("INSERT INTO School_Info (ID,adviser,year,section,School,principal) VALUES (@DI,@ad,@y,@sec,NULL,NULL)", conn))

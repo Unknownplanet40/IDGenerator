@@ -18,6 +18,10 @@ namespace IDGenerator
             InitializeComponent();
         }
 
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+        string smtpEmail = "Your email here";
+        string smtpPass = "Your email password here";
+
         Timer errorMessageTimer;
         List<string> advisers = new List<string>();
         List<string> years = new List<string>();
@@ -57,7 +61,7 @@ namespace IDGenerator
 
         private void StudentUSER_Load(object sender, EventArgs e)
         {
-            using (SqlConnection conn = new SqlConnection("Data Source=LAPTOP-7CJ5L5U7\\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection conn = new SqlConnection(conString))
             {
                 conn.Open();
                 SqlCommand cmd = new SqlCommand("SELECT * FROM School_Info;", conn);
@@ -78,7 +82,7 @@ namespace IDGenerator
                 conn.Close();
             }
 
-            using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection conn = new SqlConnection(conString))
             {
                 conn.Open();
 
@@ -353,7 +357,7 @@ namespace IDGenerator
         {
             int Completed = 0, Reset = 0;
 
-            using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection conn = new SqlConnection(conString))
             {
                 conn.Open();
 
@@ -376,7 +380,7 @@ namespace IDGenerator
 
                     if (result == DialogResult.Yes)
                     {
-                        using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                        using (SqlConnection conn = new SqlConnection(conString))
                         {
                             conn.Open();
                             using (SqlCommand cmdup = new SqlCommand("UPDATE Student_Info SET ReqReset = 1 WHERE StudentID = @SID", conn))
@@ -403,7 +407,7 @@ namespace IDGenerator
 
                 if (result == DialogResult.Yes)
                 {
-                    using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                    using (SqlConnection conn = new SqlConnection(conString))
                     {
                         conn.Open();
                         using (SqlCommand cmdup = new SqlCommand("UPDATE Student_Info SET ReqReset = 0 WHERE StudentID = @SID", conn))
@@ -434,7 +438,7 @@ namespace IDGenerator
 
         private void button5_Click(object sender, EventArgs e)
         {
-            using (SqlConnection con = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection con = new SqlConnection(conString))
             {
                 con.Open();
                 using (SqlCommand cmd = new SqlCommand("UPDATE Accounts SET status=0 WHERE AID = @SID", con))

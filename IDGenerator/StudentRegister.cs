@@ -40,6 +40,10 @@ namespace IDGenerator
         Timer errorMessageTimer;
         SqlCommand command;
 
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+        string smtpEmail = "Your email here";
+        string smtpPass = "Your email password here";
+
         private void ClearErrorMessage(object state)
         {
             if (this.InvokeRequired)
@@ -107,8 +111,8 @@ namespace IDGenerator
                 }
                 else
                 {
-                    string fromMail = "Ryanjamesc4@gmail.com";
-                    string frompass = "pxfsgnddzvmenzus";
+                    string fromMail = smtpEmail;
+                    string frompass = smtpPass;
 
                     MailMessage message = new MailMessage();
                     message.From = new MailAddress(fromMail);
@@ -142,6 +146,7 @@ namespace IDGenerator
                 }
 
                 //  SMS Verification //
+                // Please note that this is a paid service. You need to have a balance in your account to send SMS.
 
                 HttpWebRequest myWebRequest = null;
                 HttpWebResponse myWebResponse = null;
@@ -193,7 +198,7 @@ namespace IDGenerator
 
             try
             {
-                using (SqlConnection cnn = new SqlConnection("Data Source=LAPTOP-7CJ5L5U7\\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                using (SqlConnection cnn = new SqlConnection(conString))
                 {
                     cnn.Open();
                     string sql = "SELECT COUNT(StudentID) FROM Student_Info WHERE StudentID = @SID";
@@ -245,7 +250,7 @@ namespace IDGenerator
             {
                 try
                 {
-                    using (SqlConnection cnn = new SqlConnection("Data Source=LAPTOP-7CJ5L5U7\\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                    using (SqlConnection cnn = new SqlConnection(conString))
                     {
                         cnn.Open();
 

@@ -16,6 +16,10 @@ namespace IDGenerator
             InitializeComponent();
         }
 
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+        string smtpEmail = "Your email here";
+        string smtpPass = "Your email password here";
+
         private void AdminSTATUS_Load(object sender, EventArgs e)
         {
             // TODO: This line of code loads data into the 'iDGeneratorProjectDataSet.Student_Info' table. You can move, or remove it, as needed.
@@ -67,7 +71,7 @@ namespace IDGenerator
                 MessageBox.Show("Select data to proceed.", "No Data Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
             } else
             {
-                using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                using (SqlConnection conn = new SqlConnection(conString))
                 {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand("UPDATE Student_Info SET status = @stat WHERE StudentID = @UserID", conn))
@@ -80,12 +84,12 @@ namespace IDGenerator
                             MessageBox.Show("Updated Successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             this.student_InfoTableAdapter.Completed(this.iDGeneratorProjectDataSet.Student_Info);
 
-                            string fromMail = "Ryanjamesc4@gmail.com";
-                            string frompass = "pxfsgnddzvmenzus";
+                            string fromMail = smtpEmail;
+                            string frompass = smtpPass;
 
                             MailMessage message = new MailMessage();
                             message.From = new MailAddress(fromMail);
-                            message.Subject = "ID Status";
+                            message.Subject = "ID Status Changed";
                             message.To.Add(new MailAddress(textBox2.Text));
                             message.Body = "<html><body><p>This is To Inform You That Your ID Status Has Been Changed, Please Check Your Account For Cofirmation.</p>" +
                             "</html>";

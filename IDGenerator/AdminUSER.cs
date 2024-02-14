@@ -15,6 +15,8 @@ namespace IDGenerator
             InitializeComponent();
         }
 
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+
         private void viewIDBTN_Click(object sender, EventArgs e)
         {
             AdminSTATUS Stat = new AdminSTATUS();
@@ -50,7 +52,7 @@ namespace IDGenerator
 
         private void button2_Click(object sender, EventArgs e)
         {
-            using (SqlConnection con = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection con = new SqlConnection(conString))
             {
                 con.Open();
                 using (SqlCommand cmd = new SqlCommand("UPDATE Accounts SET status=0 WHERE username = @SID", con))

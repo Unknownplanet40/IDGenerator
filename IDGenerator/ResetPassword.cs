@@ -18,6 +18,10 @@ namespace IDGenerator
         private string name = String.Empty;
         private string ID = String.Empty;
 
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+        string smtpEmail = "Your email here";
+        string smtpPass = "Your email password here";
+
         static string GenerateVerificationCode()
         {
             Random random = new Random();
@@ -38,7 +42,7 @@ namespace IDGenerator
         private void code_Click(object sender, EventArgs e)
         {
             ID = SID.Text;
-            using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection conn = new SqlConnection(conString))
             {
                 try {
                 conn.Open();
@@ -61,12 +65,12 @@ namespace IDGenerator
                     conn.Close();
 
 
-                    string fromMail = "Ryanjamesc4@gmail.com";
-                    string frompass = "pxfsgnddzvmenzus";
+                    string fromMail = smtpEmail;
+                    string frompass = smtpPass;
 
                     MailMessage message = new MailMessage();
                     message.From = new MailAddress(fromMail);
-                    message.Subject = "Reset Pasword Verification Code";
+                    message.Subject = "Password Reset Verification Code";
                     message.To.Add(new MailAddress(email));
                     message.Body = "<html><body><p>Dear " + name + "<br>" +
                     "<p>We received a request to reset the password associated with your account. If you did not make this request, please ignore this email." +
@@ -123,7 +127,7 @@ namespace IDGenerator
 
             if (result == DialogResult.Yes)
             {
-                using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                using (SqlConnection conn = new SqlConnection(conString))
                 {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand("UPDATE Accounts SET password = @NewPassword WHERE AID = @UserID", conn))

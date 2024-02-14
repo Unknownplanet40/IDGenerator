@@ -18,6 +18,10 @@ namespace IDGenerator
         private string EMAIL = String.Empty;
         private string NAME = String.Empty;
 
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+        string smtpEmail = "Your email here";
+        string smtpPass = "Your email password here";
+
         private void AdminREQUEST_Load(object sender, EventArgs e)
         {
             // TODO: This line of code loads data into the 'iDGeneratorProjectDataSet.Student_Info' table. You can move, or remove it, as needed.
@@ -89,7 +93,7 @@ namespace IDGenerator
             {
                 if (MessageBox.Show("This will Reset ID Information do you want to Continue?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    using (SqlConnection cnn = new SqlConnection("Data Source=LAPTOP-7CJ5L5U7\\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                    using (SqlConnection cnn = new SqlConnection(conString))
                     {
                         cnn.Open();
                         using (SqlCommand cmd = new SqlCommand("UPDATE Student_Info SET Firstname = @fname, Middlename = @mname, Lastname = @lname, gender = @gen, birthdate = @bdate, age = @age, year = @year, section = @sec, adviser = @ads, address = @add, phone = @pnum, mail = @mail, guardianname = @gn, guardianphone = @gnp, principalname = @pname, schoolname = @school, signature = @sig, ReqReset = @req, status = @stat, canviewID = @VID, Completed = @Com WHERE StudentID = @UserID", cnn))
@@ -127,12 +131,12 @@ namespace IDGenerator
                             if(rowaffected > 0)
                             {
                                 if (MessageBox.Show("Information has been successfully reset! We will notify the user shortly.", "Reset Execute Saccessfully!", MessageBoxButtons.OK, MessageBoxIcon.Hand) == DialogResult.OK){
-                                    string fromMail = "Ryanjamesc4@gmail.com";
-                                    string frompass = "pxfsgnddzvmenzus";
+                                    string fromMail = smtpEmail;
+                                    string frompass = smtpPass;
 
                                     MailMessage message = new MailMessage();
                                     message.From = new MailAddress(fromMail);
-                                    message.Subject = "Verification Code";
+                                    message.Subject = "ID Information Reset";
                                     message.To.Add(new MailAddress(EMAIL));
                                     message.Body = "<html><body><p>Dear " + NAME + "<br>" +
                                     "<p>Your Identification Information Has Been Reset Please see the changes</p>" +

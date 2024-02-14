@@ -16,6 +16,7 @@ namespace IDGenerator
         }
 
         private int ID = 0;
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
 
         private void AdminACCOUNTS_Load(object sender, EventArgs e)
         {
@@ -30,7 +31,7 @@ namespace IDGenerator
 
         private void getlatesID()
         {
-            using (SqlConnection con = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection con = new SqlConnection(conString))
             {
                 con.Open();
 
@@ -90,7 +91,7 @@ namespace IDGenerator
         private void button1_Click(object sender, EventArgs e)
         {
             getlatesID();
-            using (SqlConnection con = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+            using (SqlConnection con = new SqlConnection(conString))
             {
                 con.Open();
                 using (SqlCommand cmd = new SqlCommand("UPDATE Accounts SET username = @u, password = @p WHERE AID = @SID", con))

@@ -19,6 +19,9 @@ namespace IDGenerator
         private string FNAME = String.Empty;
         private string MAIL = String.Empty;
         private string YEAR = DateTime.Now.Year.ToString();
+        string conString = IDGenerator.Properties.Settings.IDGeneratorCONSTRING.ConnectionString;
+        string smtpEmail = "Your email here";
+        string smtpPass = "Your email password here"; // This is not recommended. Use a secure way to store your email password like App passwords or OAuth2.0 tokens.
 
         static string GenerateRandomPassword(int length)
         {
@@ -53,7 +56,7 @@ namespace IDGenerator
             {
                 if (MessageBox.Show("Do you want to approve this student to create an account?", "Account Creation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    using (SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-7CJ5L5U7\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                    using (SqlConnection conn = new SqlConnection(conString))
                     {
                         conn.Open();
                         SqlCommand cmd = new SqlCommand("SELECT * FROM Student_Info WHERE StudentID = " + textBox1.Text, conn);
@@ -71,7 +74,7 @@ namespace IDGenerator
                     string NFNAME = FNAME.Replace(" ", "");
                     string uname = NFNAME + YEAR;
 
-                    using (SqlConnection cnn = new SqlConnection("Data Source=LAPTOP-7CJ5L5U7\\SQLEXPRESS;Initial Catalog=IDGeneratorProject;Integrated Security=True;Encrypt=False;TrustServerCertificate=True"))
+                    using (SqlConnection cnn = new SqlConnection(conString))
                     {
                         cnn.Open();
 
@@ -94,8 +97,8 @@ namespace IDGenerator
                                 string successMessage = "Account has been created! Account details are now being sent to the user.";
                                 if (MessageBox.Show(successMessage, "Account Created", MessageBoxButtons.OK, MessageBoxIcon.Information) == DialogResult.OK)
                                 {
-                                    string fromMail = "Ryanjamesc4@gmail.com";
-                                    string frompass = "pxfsgnddzvmenzus";
+                                    string fromMail = smtpEmail;
+                                    string frompass = smtpPass;
 
                                     MailMessage message = new MailMessage();
                                     message.From = new MailAddress(fromMail);
