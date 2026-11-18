@@ -179,7 +179,7 @@ jobs:
           head -n 30 CHANGELOG.md || echo "(no CHANGELOG.md)"
       - name: Upload debug artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-debug
           path: |
