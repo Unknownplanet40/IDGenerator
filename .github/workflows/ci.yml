@@ -21,7 +21,7 @@ jobs:
         id: check
         run: |
           if [ -f package.json ]; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: steps.check.outputs.exists == 'true'
         with:
           node-version: 20
@@ -45,7 +45,7 @@ jobs:
         id: check
         run: |
           if [ -f package.json ]; then echo "exists=true" >> "$GITHUB_OUTPUT"; else echo "exists=false" >> "$GITHUB_OUTPUT"; fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: steps.check.outputs.exists == 'true'
         with:
           node-version: 20
