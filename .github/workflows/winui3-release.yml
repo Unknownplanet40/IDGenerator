@@ -1,0 +1,111 @@
+name: WinUI3 Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target project. This template repo never builds MSIX.'
+        required: false
+        default: 'main'
+
+permissions:
+  contents: write
+
+env:
+  DEFAULT_BRANCH: main
+  CONFIGURATION: Release
+  PLATFORM: x64
+
+jobs:
+  build:
+    runs-on: windows-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      !contains(github.event.head_commit.message, '[skip ci]')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release -r win-x64 --no-restore
+
+      - name: Package MSIX (self-signed dev cert only; trusted signing required for public distribution)
+        run: |
+          dotnet publish -c Release -r win-x64 /p:GenerateAppxPackageOnBuild=true /p:AppxPackageDir="bin\Dist\" /p:AppxPackageSigningEnabled=true /p:PackageCertificateThumbprint="DEV_ONLY_THUMBPRINT"
+
+      - name: Generate .appinstaller
+        shell: pwsh
+        run: |
+          $version = Get-Content VERSION -Raw | ForEach-Object { $_.Trim() }
+          $appinstaller = @"
+          <?xml version="1.0" encoding="utf-8"?>
+          <AppInstaller xmlns="http://schemas.microsoft.com/appx/appinstaller/2021" Version="$version.0" Uri="https://updates.example.com/app/${{ github.event.repository.name }}.appinstaller">
+            <MainPackage Name="YourCompany.YourApp" Publisher="CN=YourNameOrCompany" Version="$version.0" ProcessorArchitecture="x64" Uri="https://updates.example.com/packages/${{ github.event.repository.name }}_$version.0_x64.msix" />
+            <UpdateSettings><OnLaunch HoursBetweenUpdateChecks="0" ShowPrompt="true" UpdateBlocksActivation="false" /></UpdateSettings>
+          </AppInstaller>
+          "@
+          Set-Content -Path "${{ github.event.repository.name }}.appinstaller" -Value $appinstaller
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          gh release create "v${VERSION}" --title "${{ github.event.repository.name }} v${VERSION}" --generate-notes
+
+      - name: Upload MSIX and .appinstaller to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          gh release upload "v${VERSION}" "bin/Dist/*" --clobber || true
+          gh release upload "v${VERSION}" "${{ github.event.repository.name }}.appinstaller" --clobber || true
+
+      - name: Update version.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION=$(cat VERSION | tr -d '[:space:]')
+          cat > version.json <<EOF
+          {
+            "name": "${{ github.event.repository.name }}",
+            "version": "${VERSION}",
+            "channel": "stable"
+          }
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add version.json
+          git commit -m "chore: update version.json for WinUI3 release v${VERSION} [skip ci]" || true
+          git push origin "${{ env.DEFAULT_BRANCH }}"
+      - name: Debug build artifacts
+        if: failure()
+        shell: pwsh
+        run: |
+          Write-Host "=== MSIX ==="
+          Get-ChildItem "bin/Dist" -Recurse -File -ErrorAction SilentlyContinue | Select-Object FullName, Length
+          Write-Host "=== AppInstaller ==="
+          Get-ChildItem "*.appinstaller" -ErrorAction SilentlyContinue | Select-Object Name, Length
+          Write-Host "=== VERSION ==="
+          Get-Content VERSION -ErrorAction SilentlyContinue
+      - name: Upload debug artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: winui3-debug
+          path: |
+            bin/Dist/
+            *.appinstaller

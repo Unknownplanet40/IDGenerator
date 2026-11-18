@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="IdGen.App.Views.Student.StudentResetIdPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Padding="24,20,24,24" HorizontalAlignment="Stretch">
+            <StackPanel Spacing="20" HorizontalAlignment="Stretch">
+            <!-- Header -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="Reset ID Request" Style="{StaticResource TitleTextBlockStyle}" FontSize="24" FontWeight="SemiBold" />
+                <TextBlock Text="Request permission to unlock and update your submitted student ID information."
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+
+            <!-- Status InfoBar -->
+            <InfoBar IsOpen="{x:Bind ViewModel.StatusMessage.Length, Mode=OneWay, Converter={StaticResource IntToBoolConverter}}"
+                     Severity="{x:Bind ViewModel.StatusSeverity, Mode=OneWay}"
+                     Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                     IsClosable="False" />
+
+            <!-- Loading Indicator -->
+            <ProgressBar IsIndeterminate="True" Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+            <!-- Reset Request Card -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="24">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Request Status &amp; Policy" FontSize="16" FontWeight="SemiBold" />
+
+                    <TextBlock Text="{x:Bind ViewModel.RequestDetails, Mode=OneWay}"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               TextWrapping="Wrap" />
+
+                    <Border Height="1" Background="{ThemeResource CardStrokeColorDefaultBrush}" Margin="0,4,0,4" />
+
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Important Notes:" FontWeight="SemiBold" FontSize="13" />
+                        <TextBlock Text="• Once an administrator approves your reset request, your current submission will be permanently cleared."
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" TextWrapping="Wrap" />
+                        <TextBlock Text="• The ID Generator will become unlocked and you will be able to submit updated information."
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" TextWrapping="Wrap" />
+                        <TextBlock Text="• Only one pending request can be submitted at a time."
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <Button Content="Submit ID Reset Request"
+                            Style="{StaticResource AccentButtonStyle}"
+                            HorizontalAlignment="Left"
+                            Margin="0,8,0,0"
+                            IsEnabled="{x:Bind ViewModel.CanRequestReset, Mode=OneWay}"
+                            Command="{x:Bind ViewModel.RequestResetCommand}"
+                            AutomationProperties.Name="Submit ID Reset Request" />
+                </StackPanel>
+            </Border>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

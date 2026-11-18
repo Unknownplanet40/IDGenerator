@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="IdGen.App.Views.Admin.AdminTemplateDesignerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:IdGen.App.Controls"
+    xmlns:models="using:IdGen.Core.Models.Template"
+    xmlns:vm="using:IdGen.App.ViewModels.Admin"
+    mc:Ignorable="d"
+    KeyDown="Page_KeyDown">
+
+    <Grid RowSpacing="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Status InfoBar -->
+        <InfoBar Grid.Row="0"
+                 IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
+                 Severity="{x:Bind ViewModel.IsStatusError, Mode=OneWay, Converter={StaticResource BoolToSeverityConverter}}"
+                 Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                 IsClosable="True" />
+
+        <!-- Top Designer Toolbar -->
+        <Border Grid.Row="1"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="12,8">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled"
+                          HorizontalScrollMode="Enabled"
+                          VerticalScrollMode="Disabled">
+                <Grid MinWidth="1020" HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left Group: Side Selector & Orientation -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <!-- Toggle Tools Button -->
+                        <Button Click="OnToggleToolsClicked" ToolTipService.ToolTip="Toggle Tools Palette" TabIndex="0">
+                            <FontIcon Glyph="&#xE8A0;" FontSize="13" />
+                        </Button>
+
+                        <AppBarSeparator />
+
+                        <!-- Front / Back Toggle -->
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Button x:Name="BtnFrontSide" Content="Front Side" Click="OnFrontSideClicked"
+                                    Style="{ThemeResource AccentButtonStyle}" TabIndex="1" />
+                            <Button x:Name="BtnBackSide" Content="Back Side" Click="OnBackSideClicked"
+                                    TabIndex="2" />
+                        </StackPanel>
+
+                        <AppBarSeparator />
+
+                        <!-- Orientation Toggle -->
+                        <Button Content="{x:Bind ViewModel.Orientation, Mode=OneWay}"
+                                Command="{x:Bind ViewModel.ToggleOrientationCommand}"
+                                ToolTipService.ToolTip="Toggle Portrait / Landscape"
+                                TabIndex="3">
+                            <Button.ContentTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xE8B9;" FontSize="14" />
+                                        <TextBlock Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                        </Button>
+
+                        <AppBarSeparator />
+
+                        <!-- Undo / Redo -->
+                        <Button Command="{x:Bind ViewModel.UndoCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanUndo, Mode=OneWay}"
+                                ToolTipService.ToolTip="Undo (Ctrl+Z)"
+                                TabIndex="4">
+                            <FontIcon Glyph="&#xE7A7;" FontSize="14" />
+                        </Button>
+                        <Button Command="{x:Bind ViewModel.RedoCommand}"
+                                IsEnabled="{x:Bind ViewModel.CanRedo, Mode=OneWay}"
+                                ToolTipService.ToolTip="Redo (Ctrl+Y)"
+                                TabIndex="5">
+                            <FontIcon Glyph="&#xE7A6;" FontSize="14" />
+                        </Button>
+
+                        <AppBarSeparator />
+
+                        <!-- Zoom Controls -->
+                        <Button Click="OnZoomOutClicked" ToolTipService.ToolTip="Zoom Out" TabIndex="6">
+                            <FontIcon Glyph="&#xE71F;" FontSize="12" />
+                        </Button>
+                        <TextBlock Text="{x:Bind FormatZoom(ViewModel.Zoom), Mode=OneWay}"
+                                   VerticalAlignment="Center" FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <Button Click="OnZoomInClicked" ToolTipService.ToolTip="Zoom In" TabIndex="7">
+                            <FontIcon Glyph="&#xE710;" FontSize="12" />
+                        </Button>
+                        <Button Click="OnZoomFitClicked" ToolTipService.ToolTip="Fit to Screen" TabIndex="8">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xE9A6;" FontSize="12" />
+                                <TextBlock Text="Fit" FontSize="11" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Right Group: Reset to Reference & Save Template -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Button Click="OnToggleInspectorClicked" ToolTipService.ToolTip="Toggle Property Inspector" TabIndex="9">
+                            <FontIcon Glyph="&#xE8A1;" FontSize="13" />
+                        </Button>
+
+                        <AppBarSeparator />
+
+                        <Button Content="Reset Reference Layout"
+                                Command="{x:Bind ViewModel.ResetToReferenceLayoutCommand}"
+                                ToolTipService.ToolTip="Reset active side to standard institutional layout"
+                                TabIndex="10" />
+
+                        <!-- Dirty Indicator Badge -->
+                        <Border Background="{ThemeResource SystemFillColorCautionBackgroundBrush}"
+                                BorderBrush="{ThemeResource SystemFillColorCautionBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="8,4"
+                                Visibility="{x:Bind ViewModel.IsDirty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <TextBlock Text="Unsaved Changes" FontSize="11" FontWeight="Medium" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                        </Border>
+
+                        <Button Content="Save Template"
+                                Style="{ThemeResource AccentButtonStyle}"
+                                Command="{x:Bind ViewModel.SaveTemplateCommand}"
+                                TabIndex="11" />
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Main Workspace (Tools Palette, Canvas, Property Inspector) -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="ColTools" Width="220" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="ColInspector" Width="320" />
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT TOOL PALETTE -->
+            <Border Grid.Column="0"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="0,0,1,0"
+                    Padding="14,16">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="16">
+                        <!-- SHAPES -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="SHAPES" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Command="{x:Bind ViewModel.AddRectangleCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE739;" FontSize="14" />
+                                    <TextBlock Text="Rectangle / Box" />
+                                </StackPanel>
+                            </Button>
+                            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Command="{x:Bind ViewModel.AddLineCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE700;" FontSize="14" />
+                                    <TextBlock Text="Line / Divider" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <MenuFlyoutSeparator />
+
+                        <!-- TEXT & FIELDS -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="TEXT &amp; FIELDS" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Command="{x:Bind ViewModel.AddStaticTextCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE8D2;" FontSize="14" />
+                                    <TextBlock Text="Static Text Block" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Dynamic Field Picker DropDown -->
+                            <DropDownButton HorizontalAlignment="Stretch" HorizontalContentAlignment="Left">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE8B7;" FontSize="14" />
+                                    <TextBlock Text="Insert Dynamic Field" />
+                                </StackPanel>
+                                <DropDownButton.Flyout>
+                                    <MenuFlyout x:Name="DynamicFieldFlyout">
+                                        <MenuFlyoutItem Text="Full Name" Click="OnInsertDynamicFieldClicked" Tag="full_name" />
+                                        <MenuFlyoutItem Text="Student Number" Click="OnInsertDynamicFieldClicked" Tag="student_no" />
+                                        <MenuFlyoutItem Text="Course / Program" Click="OnInsertDynamicFieldClicked" Tag="course" />
+                                        <MenuFlyoutItem Text="Year Level" Click="OnInsertDynamicFieldClicked" Tag="year_level" />
+                                        <MenuFlyoutItem Text="Section Name" Click="OnInsertDynamicFieldClicked" Tag="section_name" />
+                                        <MenuFlyoutItem Text="Class Adviser" Click="OnInsertDynamicFieldClicked" Tag="adviser" />
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem Text="School Name" Click="OnInsertDynamicFieldClicked" Tag="school_name" />
+                                        <MenuFlyoutItem Text="Campus Name" Click="OnInsertDynamicFieldClicked" Tag="campus_name" />
+                                        <MenuFlyoutItem Text="Signatory Name" Click="OnInsertDynamicFieldClicked" Tag="principal_name" />
+                                        <MenuFlyoutItem Text="Signatory Title" Click="OnInsertDynamicFieldClicked" Tag="principal_title" />
+                                        <MenuFlyoutItem Text="Semester" Click="OnInsertDynamicFieldClicked" Tag="semester" />
+                                        <MenuFlyoutItem Text="School Year" Click="OnInsertDynamicFieldClicked" Tag="school_year" />
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem Text="Gender" Click="OnInsertDynamicFieldClicked" Tag="gender" />
+                                        <MenuFlyoutItem Text="Blood Type" Click="OnInsertDynamicFieldClicked" Tag="blood_type" />
+                                        <MenuFlyoutItem Text="Birth Date" Click="OnInsertDynamicFieldClicked" Tag="birth_date" />
+                                        <MenuFlyoutItem Text="Calculated Age" Click="OnInsertDynamicFieldClicked" Tag="age" />
+                                        <MenuFlyoutItem Text="Emergency Address" Click="OnInsertDynamicFieldClicked" Tag="address" />
+                                        <MenuFlyoutItem Text="Guardian Name" Click="OnInsertDynamicFieldClicked" Tag="guardian_name" />
+                                        <MenuFlyoutItem Text="Guardian Phone" Click="OnInsertDynamicFieldClicked" Tag="guardian_phone" />
+                                    </MenuFlyout>
+                                </DropDownButton.Flyout>
+                            </DropDownButton>
+                        </StackPanel>
+
+                        <MenuFlyoutSeparator />
+
+                        <!-- ID WIDGETS -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="ID CARD WIDGETS" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Command="{x:Bind ViewModel.AddBarcodeCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE73A;" FontSize="14" />
+                                    <TextBlock Text="Code 128 Barcode" />
+                                </StackPanel>
+                            </Button>
+                            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Command="{x:Bind ViewModel.AddLogoCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xEB9F;" FontSize="14" />
+                                    <TextBlock Text="School Logo" />
+                                </StackPanel>
+                            </Button>
+                            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Command="{x:Bind ViewModel.AddPhotoCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE77B;" FontSize="14" />
+                                    <TextBlock Text="Student Photo (2x2)" />
+                                </StackPanel>
+                            </Button>
+                            <Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Command="{x:Bind ViewModel.AddSignatureCommand}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xEDC6;" FontSize="14" />
+                                    <TextBlock Text="Digital Signature" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <MenuFlyoutSeparator />
+
+                        <!-- ARRANGE & LAYERING -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="LAYERING &amp; LOCK" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <Grid ColumnSpacing="6" RowSpacing="6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Button Grid.Row="0" Grid.Column="0" Content="Forward" HorizontalAlignment="Stretch"
+                                        Command="{x:Bind ViewModel.BringForwardCommand}" IsEnabled="{x:Bind ViewModel.HasSelectedElement, Mode=OneWay}" />
+                                <Button Grid.Row="0" Grid.Column="1" Content="Backward" HorizontalAlignment="Stretch"
+                                        Command="{x:Bind ViewModel.SendBackwardCommand}" IsEnabled="{x:Bind ViewModel.HasSelectedElement, Mode=OneWay}" />
+
+                                <Button Grid.Row="1" Grid.Column="0" Content="To Front" HorizontalAlignment="Stretch"
+                                        Command="{x:Bind ViewModel.BringToFrontCommand}" IsEnabled="{x:Bind ViewModel.HasSelectedElement, Mode=OneWay}" />
+                                <Button Grid.Row="1" Grid.Column="1" Content="To Back" HorizontalAlignment="Stretch"
+                                        Command="{x:Bind ViewModel.SendToBackCommand}" IsEnabled="{x:Bind ViewModel.HasSelectedElement, Mode=OneWay}" />
+
+                                <Button Grid.Row="2" Grid.Column="0"
+                                        HorizontalAlignment="Stretch" Command="{x:Bind ViewModel.ToggleLockCommand}"
+                                        IsEnabled="{x:Bind ViewModel.HasSelectedElement, Mode=OneWay}">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <FontIcon Glyph="&#xE72E;" FontSize="12" />
+                                        <TextBlock Text="Lock" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Grid.Row="2" Grid.Column="1" Content="Delete" HorizontalAlignment="Stretch"
+                                        Command="{x:Bind ViewModel.DeleteSelectedElementCommand}"
+                                        IsEnabled="{x:Bind ViewModel.HasSelectedElement, Mode=OneWay}" />
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- CENTER WORKBENCH / CANVAS -->
+            <ScrollViewer x:Name="WorkbenchScrollViewer"
+                          Grid.Column="1"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto"
+                          Background="#E2E8F0"
+                          SizeChanged="WorkbenchScrollViewer_SizeChanged"
+                          PointerWheelChanged="Workbench_PointerWheelChanged"
+                          PointerPressed="Workbench_PointerPressed">
+                <Grid Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <!-- CR80 Realistic Card Container with Drop Shadow & Rounded Corners -->
+                    <Border x:Name="CardBorder"
+                            CornerRadius="12"
+                            BorderThickness="1"
+                            BorderBrush="#94A3B8"
+                            Background="White">
+                        <!-- Card Viewbox to scale smoothly -->
+                        <Viewbox Width="{x:Bind GetScaledWidth(ViewModel.CanvasWidth, ViewModel.Zoom), Mode=OneWay}"
+                                 Height="{x:Bind GetScaledHeight(ViewModel.CanvasHeight, ViewModel.Zoom), Mode=OneWay}"
+                                 Stretch="Uniform">
+                            <!-- Raw Size Canvas (638 x 1011) -->
+                            <Canvas x:Name="DesignerCanvas"
+                                    Width="{x:Bind ViewModel.CanvasWidth, Mode=OneWay}"
+                                    Height="{x:Bind ViewModel.CanvasHeight, Mode=OneWay}">
+
+                                <!-- Background Solid / Image Fill -->
+                                <Border x:Name="CardBackgroundBorder"
+                                        Width="{x:Bind ViewModel.CanvasWidth, Mode=OneWay}"
+                                        Height="{x:Bind ViewModel.CanvasHeight, Mode=OneWay}"
+                                        Background="{x:Bind ViewModel.BackgroundColor, Mode=OneWay, Converter={StaticResource HexToBrushConverter}}"
+                                        PointerPressed="CardBackground_PointerPressed">
+                                    <Image x:Name="CardBackgroundImage"
+                                           Source="{x:Bind ViewModel.BackgroundImage, Mode=OneWay}"
+                                           Stretch="{x:Bind GetImageStretch(ViewModel.BackgroundFit), Mode=OneWay}"
+                                           Visibility="{x:Bind ViewModel.HasBackgroundImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                </Border>
+
+                                <!-- Elements Dynamic Layer Canvas -->
+                                <Canvas x:Name="ElementsCanvas"
+                                        Width="{x:Bind ViewModel.CanvasWidth, Mode=OneWay}"
+                                        Height="{x:Bind ViewModel.CanvasHeight, Mode=OneWay}" />
+
+                                <!-- Selection & Resize Adorner Canvas (On Top of Elements) -->
+                                <Canvas x:Name="AdornerCanvas"
+                                        Width="{x:Bind ViewModel.CanvasWidth, Mode=OneWay}"
+                                        Height="{x:Bind ViewModel.CanvasHeight, Mode=OneWay}" />
+                            </Canvas>
+                        </Viewbox>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- RIGHT PROPERTY INSPECTOR -->
+            <Border Grid.Column="2"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1,0,0,0"
+                    Padding="16">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="16">
+                        <!-- ELEMENT INSPECTOR (Visible when element selected) -->
+                        <StackPanel Spacing="14" Visibility="{x:Bind ViewModel.HasSelectedElement, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <!-- Header with Type & Lock -->
+                            <Grid>
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Bind ViewModel.SelectedElement.Type, Mode=OneWay}" FontSize="15" FontWeight="SemiBold" />
+                                    <Border Background="{ThemeResource ControlFillColorSecondaryBrush}" CornerRadius="4" Padding="6,2"
+                                            Visibility="{x:Bind ViewModel.IsSelectedElementLocked, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <TextBlock Text="LOCKED" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource SystemFillColorCautionBrush}" />
+                                    </Border>
+                                </StackPanel>
+
+                                <Button HorizontalAlignment="Right" Command="{x:Bind ViewModel.ToggleLockCommand}">
+                                    <FontIcon Glyph="&#xE72E;" FontSize="12" />
+                                </Button>
+                            </Grid>
+
+                            <MenuFlyoutSeparator />
+
+                            <!-- Position & Geometry (X, Y, Width, Height) -->
+                            <TextBlock Text="GEOMETRY &amp; POSITION" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <Grid ColumnSpacing="8" RowSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <NumberBox x:Name="PropInputX" Grid.Row="0" Grid.Column="0" Header="X (px)"
+                                           Value="{x:Bind ViewModel.SelectedElement.X, Mode=TwoWay}" SmallChange="1" LargeChange="10"
+                                           ValueChanged="OnElementGeometryChanged" />
+                                <NumberBox x:Name="PropInputY" Grid.Row="0" Grid.Column="1" Header="Y (px)"
+                                           Value="{x:Bind ViewModel.SelectedElement.Y, Mode=TwoWay}" SmallChange="1" LargeChange="10"
+                                           ValueChanged="OnElementGeometryChanged" />
+                                <NumberBox x:Name="PropInputWidth" Grid.Row="1" Grid.Column="0" Header="Width"
+                                           Value="{x:Bind ViewModel.SelectedElement.Width, Mode=TwoWay}" SmallChange="1" LargeChange="10"
+                                           ValueChanged="OnElementGeometryChanged" />
+                                <NumberBox x:Name="PropInputHeight" Grid.Row="1" Grid.Column="1" Header="Height"
+                                           Value="{x:Bind ViewModel.SelectedElement.Height, Mode=TwoWay}" SmallChange="1" LargeChange="10"
+                                           ValueChanged="OnElementGeometryChanged" />
+                            </Grid>
+
+                            <!-- TEXT PROPERTIES -->
+                            <StackPanel Spacing="10" x:Name="TextPropertiesPanel">
+                                <TextBlock Text="TEXT STYLING" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+                                <!-- Static Text Content -->
+                                <TextBox Header="Static Text (Max 200)"
+                                         Text="{x:Bind ViewModel.SelectedElement.StaticText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         MaxLength="200"
+                                         TextChanged="OnElementContentChanged"
+                                         x:Name="StaticTextInput" />
+
+                                <!-- Dynamic Field Key -->
+                                <ComboBox Header="Field Source Key"
+                                          ItemsSource="{x:Bind ViewModel.WhitelistedDynamicFields}"
+                                          SelectedItem="{x:Bind ViewModel.SelectedElement.FieldKey, Mode=TwoWay}"
+                                          SelectionChanged="OnElementContentChanged"
+                                          HorizontalAlignment="Stretch"
+                                          x:Name="DynamicFieldCombo" />
+
+                                <!-- Font Family -->
+                                <ComboBox Header="Font Family"
+                                          ItemsSource="{x:Bind ViewModel.WhitelistedFonts}"
+                                          SelectedItem="{x:Bind ViewModel.SelectedElement.FontFamily, Mode=TwoWay}"
+                                          SelectionChanged="OnElementContentChanged"
+                                          HorizontalAlignment="Stretch" />
+
+                                <!-- Font Size & Color -->
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <NumberBox Grid.Column="0" Header="Font Size (6-72)"
+                                               Value="{x:Bind ViewModel.SelectedElement.FontSize, Mode=TwoWay}"
+                                               Minimum="6" Maximum="72"
+                                               ValueChanged="OnElementContentChanged" />
+                                    <TextBox Grid.Column="1" Header="Color (Hex)"
+                                             Text="{x:Bind ViewModel.SelectedElement.TextColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             PlaceholderText="#000000"
+                                             TextChanged="OnElementContentChanged" />
+                                </Grid>
+
+                                <!-- Text Style (Bold, Italic, Align) -->
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox Grid.Column="0" Header="Font Weight"
+                                              ItemsSource="{x:Bind ViewModel.TextWeights}"
+                                              SelectedItem="{x:Bind ViewModel.SelectedElement.FontWeight, Mode=TwoWay}"
+                                              SelectionChanged="OnElementContentChanged"
+                                              HorizontalAlignment="Stretch" />
+                                    <ComboBox Grid.Column="1" Header="Alignment"
+                                              ItemsSource="{x:Bind ViewModel.TextAlignments}"
+                                              SelectedItem="{x:Bind ViewModel.SelectedElement.TextAlign, Mode=TwoWay}"
+                                              SelectionChanged="OnElementContentChanged"
+                                              HorizontalAlignment="Stretch" />
+                                </Grid>
+
+                                <CheckBox Content="Italic"
+                                          IsChecked="{x:Bind ViewModel.SelectedElement.Italic, Mode=TwoWay}"
+                                          Click="OnElementContentChanged" />
+                            </StackPanel>
+
+                            <!-- RECTANGLE PROPERTIES -->
+                            <StackPanel Spacing="10" x:Name="RectanglePropertiesPanel">
+                                <TextBlock Text="RECTANGLE STYLING" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Header="Fill Color (Hex)"
+                                             Text="{x:Bind ViewModel.SelectedElement.FillColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             TextChanged="OnElementContentChanged" />
+                                    <NumberBox Grid.Column="1" Header="Opacity (0-100)"
+                                               Value="{x:Bind ViewModel.SelectedElement.FillOpacity, Mode=TwoWay}"
+                                               Minimum="0" Maximum="100"
+                                               ValueChanged="OnElementContentChanged" />
+                                </Grid>
+
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Header="Border Color (Hex)"
+                                             Text="{x:Bind ViewModel.SelectedElement.BorderColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             TextChanged="OnElementContentChanged" />
+                                    <NumberBox Grid.Column="1" Header="Border Width (0-8)"
+                                               Value="{x:Bind ViewModel.SelectedElement.BorderWidth, Mode=TwoWay}"
+                                               Minimum="0" Maximum="8"
+                                               ValueChanged="OnElementContentChanged" />
+                                </Grid>
+
+                                <NumberBox Header="Corner Radius (0-24)"
+                                           Value="{x:Bind ViewModel.SelectedElement.CornerRadius, Mode=TwoWay}"
+                                           Minimum="0" Maximum="24"
+                                           ValueChanged="OnElementContentChanged" />
+                            </StackPanel>
+
+                            <!-- LINE PROPERTIES -->
+                            <StackPanel Spacing="10" x:Name="LinePropertiesPanel">
+                                <TextBlock Text="LINE STYLING" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Header="Line Color (Hex)"
+                                             Text="{x:Bind ViewModel.SelectedElement.LineColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             TextChanged="OnElementContentChanged" />
+                                    <NumberBox Grid.Column="1" Header="Thickness (1-16)"
+                                               Value="{x:Bind ViewModel.SelectedElement.Thickness, Mode=TwoWay}"
+                                               Minimum="1" Maximum="16"
+                                               ValueChanged="OnElementContentChanged" />
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- BARCODE PROPERTIES -->
+                            <StackPanel Spacing="10" x:Name="BarcodePropertiesPanel">
+                                <TextBlock Text="BARCODE STYLING" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                <TextBox Header="Bar Color (Hex)"
+                                         Text="{x:Bind ViewModel.SelectedElement.BarcodeColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         TextChanged="OnElementContentChanged" />
+                                <ToggleSwitch Header="Show Human-Readable Text"
+                                              IsOn="{x:Bind ViewModel.SelectedElement.ShowHumanReadable, Mode=TwoWay}"
+                                              Toggled="OnElementContentChanged" />
+                                <ToggleSwitch Header="Quiet Zone Padding"
+                                              IsOn="{x:Bind ViewModel.SelectedElement.IncludeQuietZone, Mode=TwoWay}"
+                                              Toggled="OnElementContentChanged" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- BACKGROUND INSPECTOR (Visible when no element selected) -->
+                        <StackPanel Spacing="14" Visibility="{x:Bind ViewModel.HasSelectedElement, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="Card Background" FontSize="15" FontWeight="SemiBold" />
+                                <TextBlock Text="Configure solid fallback color or full-bleed graphic for this side."
+                                           FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+
+                            <MenuFlyoutSeparator />
+
+                            <!-- Background Color -->
+                            <TextBox Header="Solid Color (Hex Code)"
+                                     Text="{x:Bind ViewModel.BackgroundColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     PlaceholderText="#FFFFFF" />
+
+                            <!-- Background Fit Mode -->
+                            <ComboBox Header="Image Fit Mode"
+                                      ItemsSource="{x:Bind ViewModel.BackgroundFitModes}"
+                                      SelectedItem="{x:Bind ViewModel.BackgroundFit, Mode=TwoWay}"
+                                      HorizontalAlignment="Stretch" />
+
+                            <!-- Background Image Upload / Remove -->
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Background Graphic (PNG/JPG, Max 5MB)" FontWeight="Medium" FontSize="13" />
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Button Content="Upload Image" Command="{x:Bind ViewModel.UploadBackgroundCommand}" />
+                                    <Button Content="Remove" Command="{x:Bind ViewModel.RemoveBackgroundCommand}"
+                                            Visibility="{x:Bind ViewModel.HasBackgroundImage, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- DPI Warning InfoBar -->
+                            <InfoBar IsOpen="{x:Bind ViewModel.HasBackgroundDpiWarning, Mode=OneWay}"
+                                     Severity="Warning"
+                                     Message="{x:Bind ViewModel.BackgroundDpiWarning, Mode=OneWay}"
+                                     IsClosable="True" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

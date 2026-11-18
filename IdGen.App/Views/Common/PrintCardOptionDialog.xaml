@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="IdGen.App.Views.Common.PrintCardOptionDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Print / Export ID Card"
+    PrimaryButtonText="Print to Printer..."
+    SecondaryButtonText="Export PNG (300 DPI)..."
+    CloseButtonText="Cancel"
+    DefaultButton="Primary">
+
+    <StackPanel Spacing="16" MinWidth="380">
+        <TextBlock Text="Select which card sides to print or export:"
+                   FontWeight="Medium" />
+
+        <StackPanel Spacing="10">
+            <RadioButton x:Name="BothSidesRadio"
+                         Content="Both Sides (Front &amp; Back - 2 Pages / Duplex)"
+                         IsChecked="True"
+                         GroupName="PrintSidesGroup" />
+            <RadioButton x:Name="FrontOnlyRadio"
+                         Content="Front Side Only"
+                         GroupName="PrintSidesGroup" />
+            <RadioButton x:Name="BackOnlyRadio"
+                         Content="Back Side Only"
+                         GroupName="PrintSidesGroup" />
+        </StackPanel>
+
+        <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="12,10">
+            <StackPanel Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon Glyph="&#xE749;" FontSize="14" Foreground="{ThemeResource AccentFillColorDefaultBrush}" />
+                    <TextBlock Text="Hardware &amp; Sizing Guarantee" FontSize="12" FontWeight="SemiBold" />
+                </StackPanel>
+                <TextBlock Text="Renders at exact CR80 physical dimensions (85.6 mm × 54.0 mm @ 300 DPI). Native printer driver options (Zebra, Fargo, Evolis, HP, Canon, Print to PDF) can be adjusted in printer properties."
+                           FontSize="11"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</ContentDialog>

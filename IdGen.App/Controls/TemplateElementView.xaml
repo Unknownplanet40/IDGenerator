@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="IdGen.App.Controls.TemplateElementView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!-- Rendered Element Content -->
+        <Grid x:Name="ContentGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+        <!-- Selection Outline -->
+        <Border x:Name="SelectionBorder"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                IsHitTestVisible="False"
+                CornerRadius="2" />
+
+        <!-- Lock Indicator Badge -->
+        <Border x:Name="LockIndicator"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,-8,-8,0"
+                Padding="4,2"
+                CornerRadius="10"
+                Background="{ThemeResource SystemFillColorCautionBrush}"
+                Visibility="Collapsed"
+                IsHitTestVisible="False">
+            <FontIcon Glyph="&#xE72E;" FontSize="10" Foreground="White" />
+        </Border>
+    </Grid>
+</UserControl>

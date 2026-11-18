@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application
+    x:Class="IdGen.App.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:IdGen.App.Converters"
+    xmlns:local="using:IdGen.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+            <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+            <converters:BoolToSeverityConverter x:Key="BoolToSeverityConverter" />
+            <converters:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
+            <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
+            <converters:InverseBoolToVisibilityConverter x:Key="InvertedBoolToVisibilityConverter" />
+            <converters:IntToBoolConverter x:Key="IntToBoolConverter" />
+            <converters:HexToBrushConverter x:Key="HexToBrushConverter" />
+
+            <Style x:Key="BodySubtleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

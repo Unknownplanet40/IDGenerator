@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="IdGen.App.Views.Admin.AdminRegistrationsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:IdGen.Core.Models"
+    xmlns:vm="using:IdGen.App.ViewModels.Admin"
+    mc:Ignorable="d">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Padding="24,20,24,24" RowSpacing="16" HorizontalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Page Header -->
+            <StackPanel Grid.Row="0" Spacing="4">
+                <TextBlock Text="Student Registrations"
+                           FontSize="24"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="Review pending student account registrations. Approving creates active login access."
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           FontSize="13" />
+            </StackPanel>
+
+            <!-- Status InfoBar -->
+            <InfoBar Grid.Row="1"
+                     IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
+                     Severity="{x:Bind ViewModel.IsStatusError, Mode=OneWay, Converter={StaticResource BoolToSeverityConverter}}"
+                     Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                     IsClosable="True"
+                     AutomationProperties.Name="Registration Action Status" />
+
+            <!-- Table Card Container -->
+            <Border Grid.Row="2"
+                    HorizontalAlignment="Stretch"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    MinHeight="300">
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Table Column Header -->
+                    <Border Grid.Row="0"
+                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0,0,0,1"
+                            CornerRadius="8,8,0,0"
+                            Padding="16,12">
+                        <Grid ColumnSpacing="12" HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="1.8*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="160" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="STUDENT ID" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="1" Text="FULL NAME" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="2" Text="EMAIL" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="3" Text="PHONE" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="4" Text="USERNAME" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="5" Text="ACTIONS" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Empty State -->
+                    <StackPanel Grid.Row="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="8"
+                                Margin="0,48,0,48"
+                                Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <FontIcon Glyph="&#xE77B;" FontSize="40" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock Text="No pending student registrations"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="When new students register, their applications will appear here for review."
+                                   FontSize="13"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Data List -->
+                    <ListView Grid.Row="1"
+                              HorizontalAlignment="Stretch"
+                              ItemsSource="{x:Bind ViewModel.PendingRegistrations}"
+                              SelectionMode="None"
+                              Padding="0"
+                              Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="MinHeight" Value="56" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:User">
+                                <Grid Padding="16,12"
+                                      HorizontalAlignment="Stretch"
+                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                      BorderThickness="0,0,0,1"
+                                      ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="1.8*" />
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="1.2*" />
+                                        <ColumnDefinition Width="160" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Student ID -->
+                                    <TextBlock Grid.Column="0"
+                                               Text="{x:Bind StudentNo}"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Full Name -->
+                                    <TextBlock Grid.Column="1"
+                                               Text="{x:Bind FullName}"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Email -->
+                                    <TextBlock Grid.Column="2"
+                                               Text="{x:Bind Email}"
+                                               TextTrimming="CharacterEllipsis"
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Phone -->
+                                    <TextBlock Grid.Column="3"
+                                               Text="{x:Bind Phone}"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Username -->
+                                    <TextBlock Grid.Column="4"
+                                               Text="{x:Bind Username}"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Actions -->
+                                    <StackPanel Grid.Column="5"
+                                                Orientation="Horizontal"
+                                                Spacing="8"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center">
+                                        <Button Content="Approve"
+                                                Style="{ThemeResource AccentButtonStyle}"
+                                                Click="OnApproveClicked"
+                                                AutomationProperties.Name="Approve Registration Button" />
+                                        <Button Content="Decline"
+                                                Click="OnDeclineClicked"
+                                                AutomationProperties.Name="Decline Registration Button" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Page>

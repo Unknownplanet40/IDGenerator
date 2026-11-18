@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="IdGen.App.Views.StudentShellPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <NavigationView x:Name="StudentNavView"
+                        PaneTitle="Student Portal"
+                        IsSettingsVisible="False"
+                        AlwaysShowHeader="False"
+                        IsBackButtonVisible="Collapsed"
+                        ItemInvoked="StudentNavView_ItemInvoked"
+                        Loaded="StudentNavView_Loaded">
+            <NavigationView.MenuItems>
+                <NavigationViewItem x:Name="NavItemGenerator" Content="ID Generator" Tag="Generator" Icon="Edit" />
+                <NavigationViewItem x:Name="NavItemViewId" Content="View ID" Tag="ViewId" Icon="Contact" />
+                <NavigationViewItem x:Name="NavItemResetId" Content="Reset ID" Tag="ResetId" Icon="Refresh" />
+                <NavigationViewItem x:Name="NavItemAccount" Content="Account Settings" Tag="Account" Icon="Setting" />
+            </NavigationView.MenuItems>
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Content="Sign Out" Tag="SignOut" Icon="Back" />
+            </NavigationView.FooterMenuItems>
+            <Frame x:Name="StudentContentFrame" Margin="0" />
+        </NavigationView>
+    </Grid>
+</Page>

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "IdGen.App (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "IdGen.App (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

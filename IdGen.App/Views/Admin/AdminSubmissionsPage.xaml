@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="IdGen.App.Views.Admin.AdminSubmissionsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:IdGen.Core.Models"
+    xmlns:vm="using:IdGen.App.ViewModels.Admin"
+    mc:Ignorable="d">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Padding="24,20,24,24" RowSpacing="16" HorizontalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,4">
+                <StackPanel Spacing="4" VerticalAlignment="Center">
+                    <TextBlock Text="Student ID Submissions"
+                               FontSize="24"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="Review submitted student ID forms. Approving or disapproving notifies the student in-app."
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                               FontSize="13" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button x:Name="BatchPrintButton"
+                            Style="{ThemeResource AccentButtonStyle}"
+                            Click="OnBatchPrintClicked"
+                            AutomationProperties.Name="Batch Print Approved Cards">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE749;" FontSize="14" />
+                            <TextBlock Text="Batch Print Approved" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Status InfoBar -->
+            <InfoBar Grid.Row="1"
+                     IsOpen="{x:Bind ViewModel.HasStatusMessage, Mode=OneWay}"
+                     Severity="{x:Bind ViewModel.IsStatusError, Mode=OneWay, Converter={StaticResource BoolToSeverityConverter}}"
+                     Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                     IsClosable="True"
+                     AutomationProperties.Name="Submission Action Status" />
+
+            <!-- Table Card Container -->
+            <Border Grid.Row="2"
+                    HorizontalAlignment="Stretch"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    MinHeight="300">
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Table Column Header -->
+                    <Border Grid.Row="0"
+                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0,0,0,1"
+                            CornerRadius="8,8,0,0"
+                            Padding="16,12">
+                        <Grid ColumnSpacing="12" HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="65" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="65" />
+                                <ColumnDefinition Width="1.1*" />
+                                <ColumnDefinition Width="1.2*" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="360" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="FORM #" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="1" Text="STUDENT" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="2" Text="GENDER" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="3" Text="GUARDIAN" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="4" Text="INSTITUTION / ADVISER" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="5" Text="STATUS" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="6" Text="SUBMITTED" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="7" Text="ACTIONS" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Empty State -->
+                    <StackPanel Grid.Row="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="8"
+                                Margin="0,48,0,48"
+                                Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <FontIcon Glyph="&#xE7BE;" FontSize="40" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock Text="No student ID submissions"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="When students submit their ID forms, they will appear here for review."
+                                   FontSize="13"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Data List -->
+                    <ListView Grid.Row="1"
+                              HorizontalAlignment="Stretch"
+                              ItemsSource="{x:Bind ViewModel.Submissions}"
+                              SelectionMode="None"
+                              Padding="0"
+                              Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="MinHeight" Value="56" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:IdSubmission">
+                                <Grid Padding="16,12"
+                                      HorizontalAlignment="Stretch"
+                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                      BorderThickness="0,0,0,1"
+                                      ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="65" />
+                                        <ColumnDefinition Width="150" />
+                                        <ColumnDefinition Width="65" />
+                                        <ColumnDefinition Width="1.1*" />
+                                        <ColumnDefinition Width="1.2*" />
+                                        <ColumnDefinition Width="90" />
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="360" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Submission ID -->
+                                    <TextBlock Grid.Column="0"
+                                               Text="{x:Bind Id}"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Student Profile -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="{x:Bind StudentNoDisplay}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{x:Bind StudentNameDisplay}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <!-- Gender -->
+                                    <TextBlock Grid.Column="2"
+                                               Text="{x:Bind Gender}"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Guardian -->
+                                    <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                                        <TextBlock Text="{x:Bind GuardianName}" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{x:Bind GuardianPhone}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                    </StackPanel>
+
+                                    <!-- Snapshots -->
+                                    <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                                        <TextBlock Text="{x:Bind SchoolSnapshot}" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{x:Bind AdviserSnapshot}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <!-- Status Badge -->
+                                    <Border Grid.Column="5"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Left"
+                                            CornerRadius="4"
+                                            Padding="8,2"
+                                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                        <TextBlock Text="{x:Bind Status}"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold" />
+                                    </Border>
+
+                                    <!-- Submitted Date -->
+                                    <TextBlock Grid.Column="6"
+                                               Text="{x:Bind SubmittedAtDisplay}"
+                                               FontSize="12"
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                               VerticalAlignment="Center" />
+
+                                    <!-- Actions -->
+                                    <StackPanel Grid.Column="7"
+                                                Orientation="Horizontal"
+                                                Spacing="6"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center">
+                                        <Button Click="OnPreviewClicked"
+                                                ToolTipService.ToolTip="Preview Front and Back ID Cards"
+                                                AutomationProperties.Name="Preview ID Card Button">
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <FontIcon Glyph="&#xE8FF;" FontSize="12" />
+                                                <TextBlock Text="Preview" FontSize="12" />
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Content="Approve"
+                                                Style="{ThemeResource AccentButtonStyle}"
+                                                Click="OnApproveClicked"
+                                                IsEnabled="{x:Bind IsPending}"
+                                                AutomationProperties.Name="Approve Submission Button" />
+                                        <Button Content="Disapprove"
+                                                Click="OnDisapproveClicked"
+                                                IsEnabled="{x:Bind IsPending}"
+                                                AutomationProperties.Name="Disapprove Submission Button" />
+                                        <Button Click="OnPrintRowClicked"
+                                                ToolTipService.ToolTip="Print or Export ID Card"
+                                                IsEnabled="{x:Bind IsApproved}"
+                                                AutomationProperties.Name="Print ID Card Button">
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <FontIcon Glyph="&#xE749;" FontSize="12" />
+                                                <TextBlock Text="Print" FontSize="12" />
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Page>

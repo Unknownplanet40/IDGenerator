@@ -1,0 +1,112 @@
+name: Bug Report
+description: File an issue to report a bug or unexpected behavior.
+title: "fix: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this issue! Please provide as much detail as possible.
+  - type: checkboxes
+    id: duplicate-check
+    attributes:
+      label: Pre-Submission Checklist
+      description: Confirm these steps before submitting.
+      options:
+        - label: I searched existing issues and verified this is not a duplicate.
+          required: true
+        - label: I am running the latest release version.
+          required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe the problem...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: A clear description of what actually happened instead.
+      placeholder: Describe what actually happened...
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity & Impact
+      description: How severely does this bug impair application usage?
+      options:
+        - Low (Cosmetic defect, minor visual glitch)
+        - Medium (Feature impaired, viable workaround exists)
+        - High (Core feature broken, no workaround)
+        - Critical / Blocker (Crash, data corruption, security exposure)
+    validations:
+      required: true
+  - type: dropdown
+    id: packaging
+    attributes:
+      label: Packaging / Runtime Mode
+      description: How was the application installed and executed?
+      options:
+        - Packaged (MSIX / AppInstaller)
+        - Unpackaged (Standalone / Portable / Developer Build)
+        - Web / Hosted
+        - Not Applicable
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system and environment details.
+      placeholder: |
+        - OS: Windows 11 (Version / Build number)
+        - App Version / Tag: v0.1.0
+        - Architecture: x64 / ARM64
+    validations:
+      required: true
+  - type: checkboxes
+    id: regression
+    attributes:
+      label: Regression
+      options:
+        - label: Did this feature work as expected in a previous version?
+          required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs & Diagnostics
+      description: Paste crash dumps, terminal logs, or stack traces here.
+      placeholder: Paste console output or exception stack traces...
+      render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or logs here.
+    validations:
+      required: false

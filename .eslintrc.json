@@ -1,0 +1,7 @@
+{
+  "extends": "next",
+  "rules": {
+    "no-console": "error",
+    "@typescript-eslint/no-explicit-any": "error"
+  }
+}

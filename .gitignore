@@ -260,3 +260,19 @@ paket-files/
 __pycache__/
 *.pyc
 /IDGenerator.zip
+
+# AI & Agent Tooling (ignored in new projects)
+AGENTS.md
+.agents/
+.gemini/
+.claude/
+.cursor/
+handoff.md
+guides/
+docs/presets/
+.commit_msg.txt
+.env.local
+*.db
+*.db-shm
+*.db-wal
+crash.log

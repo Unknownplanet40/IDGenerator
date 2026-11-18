@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="IdGen.App.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:IdGen.App.ViewModels"
+    mc:Ignorable="d">
+
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Border Width="400"
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="32">
+            <StackPanel Spacing="16">
+                <!-- App Title -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Student ID Generator"
+                               Style="{ThemeResource TitleTextBlockStyle}"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="Sign in to your account"
+                               Style="{ThemeResource BodySubtleTextBlockStyle}" />
+                </StackPanel>
+
+                <!-- Spec Error / Status Gate InfoBar (A3, A5) -->
+                <InfoBar IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}"
+                         Severity="Error"
+                         Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                         IsClosable="True"
+                         AutomationProperties.Name="Login Error Alert" />
+
+                <!-- Username Field -->
+                <StackPanel Spacing="4">
+                    <TextBox Header="Username"
+                             Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.Name="Username Input"
+                             PlaceholderText="Enter your username"
+                             TabIndex="1" />
+                    <TextBlock Text="{x:Bind ViewModel.UsernameError, Mode=OneWay}"
+                               Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Visibility="{x:Bind ViewModel.UsernameError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}"
+                               AutomationProperties.Name="Username Error Text" />
+                </StackPanel>
+
+                <!-- Password Field -->
+                <StackPanel Spacing="4">
+                    <PasswordBox Header="Password"
+                                 Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="Password Input"
+                                 PlaceholderText="Enter your password"
+                                 TabIndex="2" />
+                    <TextBlock Text="{x:Bind ViewModel.PasswordError, Mode=OneWay}"
+                               Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Visibility="{x:Bind ViewModel.PasswordError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}"
+                               AutomationProperties.Name="Password Error Text" />
+                </StackPanel>
+
+                <!-- Login Button -->
+                <Button Content="Sign In"
+                        Style="{ThemeResource AccentButtonStyle}"
+                        HorizontalAlignment="Stretch"
+                        Command="{x:Bind ViewModel.LoginCommand}"
+                        IsEnabled="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"
+                        AutomationProperties.Name="Sign In Button"
+                        TabIndex="3"
+                        Margin="0,8,0,0" />
+
+                <ProgressBar IsIndeterminate="True"
+                             Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                <!-- Register Link for Students -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4" Margin="0,8,0,0">
+                    <TextBlock Text="Don't have an account?"
+                               VerticalAlignment="Center"
+                               Style="{ThemeResource BodyTextBlockStyle}" />
+                    <HyperlinkButton Content="Register as Student"
+                                     Command="{x:Bind ViewModel.GoToRegisterCommand}"
+                                     AutomationProperties.Name="Register as Student Link"
+                                     TabIndex="4" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

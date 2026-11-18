@@ -1,0 +1,20 @@
+#!/bin/sh
+# Pre-commit hook: prevent committing agent, assistant, and template guides in project repositories
+
+BLOCKED_PATTERNS="^(AGENTS\.md|\.agents/|\.gemini/|\.claude/|\.cursor/|handoff\.md|guides/|docs/presets/)"
+
+STAGED_BLOCKED=$(git diff --cached --name-only | grep -E "$BLOCKED_PATTERNS" 2>/dev/null)
+
+if [ -n "$STAGED_BLOCKED" ]; then
+  echo "" >&2
+  echo "[BLOCKED] The following agent and template files cannot be committed in this project:" >&2
+  echo "$STAGED_BLOCKED" | sed 's/^/  - /' >&2
+  echo "" >&2
+  echo "These files should remain on disk locally for Antigravity, but not tracked in Git." >&2
+  echo "To unstage these files from Git while keeping them on disk, run:" >&2
+  echo "  git rm -r --cached --ignore-unmatch AGENTS.md .agents .gemini .claude .cursor handoff.md guides docs/presets" >&2
+  echo "" >&2
+  exit 1
+fi
+
+exit 0

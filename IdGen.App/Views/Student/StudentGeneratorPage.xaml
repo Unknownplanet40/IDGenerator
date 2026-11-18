@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="IdGen.App.Views.Student.StudentGeneratorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:IdGen.Core.Models"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Padding="32,24,32,32" HorizontalAlignment="Stretch">
+            <StackPanel Spacing="20" HorizontalAlignment="Stretch" MaxWidth="900">
+                <!-- Header -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Student ID Generator" Style="{StaticResource TitleTextBlockStyle}" FontSize="24" FontWeight="SemiBold" />
+                    <TextBlock Text="Fill out all required details to generate and submit your student ID card." Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+
+                <!-- Status InfoBar -->
+                <InfoBar IsOpen="{x:Bind ViewModel.StatusMessage.Length, Mode=OneWay, Converter={StaticResource IntToBoolConverter}}"
+                         Severity="{x:Bind ViewModel.StatusSeverity, Mode=OneWay}"
+                         Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                         IsClosable="False" />
+
+                <!-- Loading Indicator -->
+                <ProgressBar IsIndeterminate="True" Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+
+                <!-- Form Content -->
+                <ContentControl IsEnabled="{x:Bind ViewModel.IsLocked, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"
+                                HorizontalContentAlignment="Stretch"
+                                IsTabStop="False">
+                    <StackPanel Spacing="20">
+
+                        <!-- Section 1: Auto-filled Registration Details (Read-only) -->
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="20">
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="Student Registration Details" FontSize="16" FontWeight="SemiBold" />
+                                    <TextBlock Text="Imported automatically from your student profile and cannot be edited here."
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
+                                </StackPanel>
+
+                                <Grid ColumnSpacing="16" RowSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Student ID Number" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.StudentNo, Mode=OneWay}" IsReadOnly="True"
+                                                 AutomationProperties.Name="Student ID Number" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Full Name" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.FullName, Mode=OneWay}" IsReadOnly="True"
+                                                 AutomationProperties.Name="Full Name" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Email Address" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.Email, Mode=OneWay}" IsReadOnly="True"
+                                                 AutomationProperties.Name="Email Address" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Phone Number" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.Phone, Mode=OneWay}" IsReadOnly="True"
+                                                 AutomationProperties.Name="Phone Number" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section 2: Institution & Academic Snapshots (Read-only) -->
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="20">
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="Institution &amp; Term Information" FontSize="16" FontWeight="SemiBold" />
+                                    <TextBlock Text="Active academic term defaults stamped onto your ID card upon submission."
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
+                                </StackPanel>
+
+                                <Grid ColumnSpacing="16" RowSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!-- School & Campus -->
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="School Name" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.SchoolName, Mode=OneWay}" IsReadOnly="True"
+                                                 AutomationProperties.Name="School Name Display" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Campus" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.CampusName, Mode=OneWay}" IsReadOnly="True"
+                                                 AutomationProperties.Name="Campus Name Display" />
+                                    </StackPanel>
+
+                                    <!-- Semester & School Year -->
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Current Semester" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.Semester, Mode=OneWay}" IsReadOnly="True"
+                                                 AutomationProperties.Name="Semester Display" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="School Year" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.SchoolYear, Mode=OneWay}" IsReadOnly="True"
+                                                 AutomationProperties.Name="School Year Display" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section 3: Personal & Academic Details -->
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="20">
+                            <StackPanel Spacing="16">
+                                <TextBlock Text="Personal &amp; Program Information" FontSize="16" FontWeight="SemiBold" />
+
+                                <!-- Gender & Blood Type -->
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Gender RadioButtons -->
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Gender *" FontWeight="Medium" />
+                                        <StackPanel Orientation="Horizontal" Spacing="24">
+                                            <RadioButton Content="Male" IsChecked="True" GroupName="GenderGroup"
+                                                         Checked="GenderMale_Checked" AutomationProperties.Name="Gender Male" />
+                                            <RadioButton Content="Female" GroupName="GenderGroup"
+                                                         Checked="GenderFemale_Checked" AutomationProperties.Name="Gender Female" />
+                                        </StackPanel>
+                                        <TextBlock Text="{x:Bind ViewModel.GenderError, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" FontSize="12"
+                                                   Visibility="{x:Bind ViewModel.GenderError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                                    </StackPanel>
+
+                                    <!-- Blood Type (Optional) -->
+                                    <StackPanel Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Blood Type (Optional)" FontWeight="Medium" />
+                                        <ComboBox ItemsSource="{x:Bind ViewModel.BloodTypeOptions}"
+                                                  SelectedItem="{x:Bind ViewModel.BloodType, Mode=TwoWay}"
+                                                  HorizontalAlignment="Stretch"
+                                                  PlaceholderText="Select Blood Type (Optional)"
+                                                  AutomationProperties.Name="Blood Type Selector" />
+                                        <TextBlock Text="{x:Bind ViewModel.BloodTypeError, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" FontSize="12"
+                                                   Visibility="{x:Bind ViewModel.BloodTypeError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Birth Date & Age -->
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Birth Date *" FontWeight="Medium" />
+                                        <CalendarDatePicker x:Name="BirthDatePicker"
+                                                            HorizontalAlignment="Stretch"
+                                                            DateChanged="BirthDatePicker_DateChanged"
+                                                            PlaceholderText="Select your birth date"
+                                                            AutomationProperties.Name="Birth Date" />
+                                        <TextBlock Text="{x:Bind ViewModel.BirthDateError, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" FontSize="12"
+                                                   Visibility="{x:Bind ViewModel.BirthDateError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Calculated Age" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.Age, Mode=OneWay}" IsReadOnly="True"
+                                                 AutomationProperties.Name="Calculated Age" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Year & Section, Course, Adviser -->
+                                <Grid ColumnSpacing="16" RowSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1.5*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="1.5*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Year &amp; Section *" FontWeight="Medium" />
+                                        <ComboBox x:Name="SectionComboBox"
+                                                  HorizontalAlignment="Stretch"
+                                                  ItemsSource="{x:Bind ViewModel.Sections, Mode=OneWay}"
+                                                  SelectedItem="{x:Bind ViewModel.SelectedSection, Mode=TwoWay}"
+                                                  PlaceholderText="Select Year &amp; Section"
+                                                  AutomationProperties.Name="Grade Year and Section">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate x:DataType="models:Section">
+                                                    <TextBlock Text="{x:Bind DisplayName}" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <TextBlock Text="{x:Bind ViewModel.SectionError, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" FontSize="12"
+                                                   Visibility="{x:Bind ViewModel.SectionError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Program / Course" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.Course, Mode=OneWay}" IsReadOnly="True"
+                                                 PlaceholderText="Auto-filled"
+                                                 AutomationProperties.Name="Program Course Display" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" Spacing="4">
+                                        <TextBlock Text="Class Adviser" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.Adviser, Mode=OneWay}" IsReadOnly="True"
+                                                 PlaceholderText="Auto-filled"
+                                                 AutomationProperties.Name="Section Adviser" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Complete Address -->
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Complete Address *" FontWeight="Medium" />
+                                    <TextBox Text="{x:Bind ViewModel.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             MaxLength="250"
+                                             PlaceholderText="Street, Barangay, City/Municipality, Province"
+                                             AutomationProperties.Name="Complete Address" />
+                                    <TextBlock Text="{x:Bind ViewModel.AddressError, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" FontSize="12"
+                                               Visibility="{x:Bind ViewModel.AddressError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                                </StackPanel>
+
+                                <!-- Guardian Details -->
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="Guardian / Parent Name *" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.GuardianName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 MaxLength="100"
+                                                 PlaceholderText="Full name of guardian"
+                                                 AutomationProperties.Name="Guardian Name" />
+                                        <TextBlock Text="{x:Bind ViewModel.GuardianNameError, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" FontSize="12"
+                                                   Visibility="{x:Bind ViewModel.GuardianNameError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Spacing="4">
+                                        <TextBlock Text="Guardian Phone Number *" FontWeight="Medium" />
+                                        <TextBox Text="{x:Bind ViewModel.GuardianPhone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 PlaceholderText="09XXXXXXXXX or +639XXXXXXXXX"
+                                                 AutomationProperties.Name="Guardian Phone Number" />
+                                        <TextBlock Text="{x:Bind ViewModel.GuardianPhoneError, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" FontSize="12"
+                                                   Visibility="{x:Bind ViewModel.GuardianPhoneError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section 4: 2x2 Profile Picture -->
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="20">
+                            <StackPanel Spacing="16">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="Student Profile Picture (2x2)" FontSize="16" FontWeight="SemiBold" />
+                                    <TextBlock Text="Upload a recent 2x2 formal photo or capture one using your webcam."
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
+                                </StackPanel>
+
+                                <Grid ColumnSpacing="20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- 2x2 Photo Preview Box -->
+                                    <Border Grid.Column="0"
+                                            Width="130"
+                                            Height="130"
+                                            CornerRadius="6"
+                                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            Background="{ThemeResource LayerFillColorDefaultBrush}">
+                                        <Grid>
+                                            <!-- Empty placeholder -->
+                                            <StackPanel VerticalAlignment="Center"
+                                                        HorizontalAlignment="Center"
+                                                        Spacing="4"
+                                                        Visibility="{x:Bind ViewModel.HasPhoto, Mode=OneWay, Converter={StaticResource InvertedBoolToVisibilityConverter}}">
+                                                <FontIcon Glyph="&#xE77B;" FontSize="32" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                <TextBlock Text="No Photo" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                            </StackPanel>
+
+                                            <!-- Loaded photo -->
+                                            <Image Source="{x:Bind ViewModel.PhotoImage, Mode=OneWay}"
+                                                   Stretch="UniformToFill"
+                                                   Visibility="{x:Bind ViewModel.HasPhoto, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Upload & Capture Action Buttons -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="10">
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                            <Button Click="OnUploadPhotoClicked"
+                                                    IsEnabled="{x:Bind ViewModel.IsLocked, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"
+                                                    AutomationProperties.Name="Upload Photo Button">
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <FontIcon Glyph="&#xE898;" FontSize="14" />
+                                                    <TextBlock Text="Upload Photo" />
+                                                </StackPanel>
+                                            </Button>
+
+                                            <Button Click="OnCapturePhotoClicked"
+                                                    IsEnabled="{x:Bind ViewModel.IsLocked, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"
+                                                    AutomationProperties.Name="Capture Photo from Webcam">
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <FontIcon Glyph="&#xE722;" FontSize="14" />
+                                                    <TextBlock Text="Capture Photo" />
+                                                </StackPanel>
+                                            </Button>
+
+                                            <Button Click="OnRemovePhotoClicked"
+                                                    IsEnabled="{x:Bind ViewModel.IsLocked, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"
+                                                    Visibility="{x:Bind ViewModel.HasPhoto, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                    AutomationProperties.Name="Remove Profile Photo">
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <FontIcon Glyph="&#xE74D;" FontSize="14" />
+                                                    <TextBlock Text="Remove" />
+                                                </StackPanel>
+                                            </Button>
+                                        </StackPanel>
+
+                                        <TextBlock Text="Supported formats: PNG, JPG, JPEG (Max 4 MB)."
+                                                   FontSize="12"
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+                                        <TextBlock Text="{x:Bind ViewModel.PhotoError, Mode=OneWay}"
+                                                   Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                                   FontSize="12"
+                                                   Visibility="{x:Bind ViewModel.PhotoError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section 5: Digital Signature -->
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="20">
+                            <StackPanel Spacing="12">
+                                <Grid>
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Text="Digital Signature *" FontSize="16" FontWeight="SemiBold" />
+                                        <TextBlock Text="Draw your signature below using your mouse, trackpad, or pen."
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
+                                    </StackPanel>
+
+                                    <Button Content="Clear Signature" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                            Click="ClearSignatureButton_Click" AutomationProperties.Name="Clear Signature" />
+                                </Grid>
+
+                                <!-- Signature Canvas Container -->
+                                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Background="White"
+                                        Height="140"
+                                        HorizontalAlignment="Stretch">
+                                    <Canvas x:Name="SignatureCanvas"
+                                            Background="White"
+                                            Height="140"
+                                            HorizontalAlignment="Stretch"
+                                            PointerPressed="SignatureCanvas_PointerPressed"
+                                            PointerMoved="SignatureCanvas_PointerMoved"
+                                            PointerReleased="SignatureCanvas_PointerReleased"
+                                            PointerCaptureLost="SignatureCanvas_PointerCaptureLost" />
+                                </Border>
+
+                                <TextBlock Text="{x:Bind ViewModel.SignatureError, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" FontSize="12"
+                                           Visibility="{x:Bind ViewModel.SignatureError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section 5: Confirmation & Submission -->
+                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="20">
+                            <StackPanel Spacing="16">
+                                <CheckBox Content="I accept all information as correct *"
+                                          IsChecked="{x:Bind ViewModel.IsAcceptInfoChecked, Mode=TwoWay}"
+                                          AutomationProperties.Name="Accept information confirmation" />
+
+                                <TextBlock Text="{x:Bind ViewModel.AcceptInfoError, Mode=OneWay}" Foreground="{ThemeResource SystemFillColorCriticalBrush}" FontSize="12"
+                                           Visibility="{x:Bind ViewModel.AcceptInfoError, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}" />
+
+                                <Button Content="Submit ID Information"
+                                        Style="{StaticResource AccentButtonStyle}"
+                                        HorizontalAlignment="Left"
+                                        Command="{x:Bind ViewModel.SubmitCommand}"
+                                        AutomationProperties.Name="Submit ID Information" />
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ContentControl>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>
